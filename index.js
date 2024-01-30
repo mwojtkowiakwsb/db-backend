@@ -76,7 +76,6 @@ app.post('/api/column/:table', (req, res) => {
 app.put('/api/column/:table', (req, res) => {
   const { oldColumnName, newColumnName } = req.body;
   const table = camelcaseTables[req.params.table] ?? req.params.table
-  console.log(table);
   pool.query(`ALTER TABLE ?? RENAME COLUMN ?? TO ??`, [table, oldColumnName, newColumnName], (error, results) => {
     if (error) {
       console.log(error);
@@ -144,7 +143,7 @@ app.post('/api/table/:table', (req, res) => {
 app.put('/api/row/:table', (req, res) => {
   const snakeCaseMessage = convertKeysToSnakeCase(req.body.data);
   const snakeCaseCondition = convertKeysToSnakeCase(req.body.conditionData);
-  const table = req.params.table;
+  const table = camelcaseTables[req.params.table] ?? req.params.table;
   const columns = Object.keys(snakeCaseCondition);
   const conditonColumns = Object.keys(snakeCaseCondition);
   const updateData = Object.keys(snakeCaseMessage).map(column => `${mysql.escapeId(column)} = ${mysql.escape(snakeCaseMessage[column])}`).join(', ')
